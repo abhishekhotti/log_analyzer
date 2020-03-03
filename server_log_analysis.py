@@ -39,7 +39,6 @@ import smtplib
 from email.mime.text import MIMEText
 import getpass
 import random
-
 import os
 from paths import path
 import string
@@ -133,11 +132,21 @@ def makeText():
     if ret_val == 2:
         return render_template("mail_sent.html")
     elif ret_val == 1:
-        return redirect(url_for("file_downloads"))
+        return redirect(url_for("loading"))
+        # return redirect(url_for("file_downloads"))
     elif ret_val == "fail":
         return render_template("checkFile.html")
     else:
         return redirect(url_for("index"))
+
+@app.route("/loading", methods=["POST", "GET"])
+def loading():
+    # print(fileNameToUse)
+    for subdir, dirs, files in os.walk(path + "downloads"):
+            for file in files:
+                if file == fileNameToUse+".txt":
+                    return redirect(url_for("file_downloads"))    
+    return render_template("loadingPage.html", fileNameToUse = fileNameToUse)
 
 
 @app.route("/addRegion", methods=["GET", "POST"])
@@ -176,7 +185,8 @@ def addRegion():
     if ret_val == 2:
         return render_template("mail_sent.html")
     elif ret_val == 1:
-        return redirect(url_for("file_downloads"))
+        return redirect(url_for("loading"))
+        # return redirect(url_for("file_downloads"))
     elif ret_val == "fail":
         return render_template("checkFile.html")
     else:
